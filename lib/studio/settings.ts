@@ -35,6 +35,16 @@ export const CHARSETS: Record<CharsetKey, { label: string; chars: string[] }> = 
   procedural: { label: "Procedural (no glyphs)", chars: [] },
 }
 
+/** Which model axis points up. Fixes files exported from a Z-up tool, or upside down. */
+export type UpAxis = "y" | "z" | "-y" | "-z"
+
+export const UP_AXES: { value: UpAxis; label: string }[] = [
+  { value: "y", label: "Y (standard glTF)" },
+  { value: "z", label: "Z is up" },
+  { value: "-y", label: "−Y (upside down)" },
+  { value: "-z", label: "−Z" },
+]
+
 export type PrimitiveKey = "torusknot" | "torus" | "icosahedron" | "box" | "sphere" | "cone"
 
 export const PRIMITIVES: Record<PrimitiveKey, string> = {
@@ -55,11 +65,18 @@ export const DEMO_MODEL: ModelSource = { kind: "url", url: "/models/user-model.g
 export interface StudioSettings {
   transform: {
     scale: number
+    upAxis: UpAxis
+    mirrorX: boolean
+    mirrorY: boolean
+    mirrorZ: boolean
     offsetX: number
     offsetY: number
     tiltX: number
     tiltY: number
     tiltZ: number
+    phaseX: number
+    phaseY: number
+    phaseZ: number
     cameraDistance: number
     camAzimuth: number
     camElevation: number
@@ -147,11 +164,18 @@ export interface StudioSettings {
 export const DEFAULT_SETTINGS: StudioSettings = {
   transform: {
     scale: 1,
+    upAxis: "y",
+    mirrorX: false,
+    mirrorY: false,
+    mirrorZ: false,
     offsetX: 0,
     offsetY: 0,
     tiltX: 17,
     tiltY: 0,
     tiltZ: -4.5,
+    phaseX: 0,
+    phaseY: 0,
+    phaseZ: 0,
     cameraDistance: 4.5,
     camAzimuth: 0,
     camElevation: 0,

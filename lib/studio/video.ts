@@ -166,7 +166,7 @@ class RecorderSink implements FrameSink {
 
   finish(): Promise<Blob> {
     return new Promise((resolve, reject) => {
-      this.recorder.onerror = () => reject(new Error("Registrazione video fallita"))
+      this.recorder.onerror = () => reject(new Error("Video recording failed"))
       this.recorder.onstop = () => resolve(new Blob(this.chunks, { type: this.mime }))
       this.recorder.requestData()
       this.recorder.stop()
@@ -187,7 +187,7 @@ export async function createVideoSink(canvas: HTMLCanvasElement, fps: number): P
     if (mime) return new RecorderSink(canvas, fps, mime)
   }
 
-  throw new Error("Questo browser non sa codificare video: esporta in GIF")
+  throw new Error("This browser cannot encode video — export a GIF instead")
 }
 
 /** Whether the browser can encode video at all — used to warn before a long render. */

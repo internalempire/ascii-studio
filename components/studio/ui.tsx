@@ -115,7 +115,7 @@ export function Param({
           className="param__label"
           htmlFor={id}
           onDoubleClick={() => defaultValue !== undefined && onChange(defaultValue)}
-          title={defaultValue !== undefined ? `${label} — doppio clic per tornare a ${defaultValue}` : label}
+          title={defaultValue !== undefined ? `${label} — double-click to reset to ${defaultValue}` : label}
         >
           {label}
         </label>
@@ -124,7 +124,7 @@ export function Param({
           type="text"
           inputMode="decimal"
           disabled={disabled}
-          aria-label={`${label}, valore numerico`}
+          aria-label={`${label}, numeric value`}
           value={draft ?? value.toFixed(decimals)}
           onChange={(e) => setDraft(e.target.value)}
           onBlur={(e) => commit(e.target.value)}
@@ -262,7 +262,7 @@ export function ColorField({
         className="hex"
         value={draft ?? value.toUpperCase()}
         disabled={disabled}
-        aria-label={`${label}, codice esadecimale`}
+        aria-label={`${label}, hex code`}
         onChange={(e) => setDraft(e.target.value)}
         onBlur={(e) => commit(e.target.value)}
         onKeyDown={(e) => {
@@ -310,7 +310,7 @@ export function Stepper({
           className="stepper__btn"
           onClick={() => onChange(Math.max(min, value - 1))}
           disabled={value <= min}
-          aria-label={`${label}: un giro in meno`}
+          aria-label={`${label}: one turn fewer`}
         >
           −
         </button>
@@ -322,7 +322,7 @@ export function Stepper({
           className="stepper__btn"
           onClick={() => onChange(Math.min(max, value + 1))}
           disabled={value >= max}
-          aria-label={`${label}: un giro in più`}
+          aria-label={`${label}: one turn more`}
         >
           +
         </button>
@@ -357,6 +357,41 @@ export function Seg<T extends string>({
           {o.label}
         </button>
       ))}
+    </div>
+  )
+}
+
+/* ---------- independent flags ---------- */
+
+export function Flags<T extends string>({
+  label,
+  options,
+  values,
+  onToggle,
+}: {
+  label: string
+  options: { value: T; label: string }[]
+  values: Record<T, boolean>
+  onToggle: (value: T, next: boolean) => void
+}) {
+  return (
+    <div className="param">
+      <div className="param__top">
+        <span className="param__label">{label}</span>
+      </div>
+      <div className="seg" role="group" aria-label={label}>
+        {options.map((o) => (
+          <button
+            key={o.value}
+            type="button"
+            className="seg__item"
+            aria-pressed={values[o.value]}
+            onClick={() => onToggle(o.value, !values[o.value])}
+          >
+            {o.label}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

@@ -72,7 +72,7 @@ function binarizeAlpha(rgba: Uint8ClampedArray, threshold = 110) {
 
 export async function encodeGif(frames: Uint8ClampedArray[], opts: GifEncodeOptions): Promise<Blob> {
   const { width, height, fps, colors, transparent, onProgress, shouldAbort } = opts
-  if (frames.length === 0) throw new Error("Nessun frame da codificare")
+  if (frames.length === 0) throw new Error("No frames to encode")
 
   if (transparent) for (const frame of frames) binarizeAlpha(frame)
 

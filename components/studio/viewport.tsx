@@ -180,8 +180,8 @@ export function Viewport({
       {dropping ? (
         <div className="overlay overlay--drop">
           <div>
-            <p className="overlay__title">Rilascia qui il modello</p>
-            <p className="overlay__sub">.glb, oppure .gltf con i suoi file di supporto</p>
+            <p className="overlay__title">Drop the model here</p>
+            <p className="overlay__sub">.glb, or .gltf together with its companion files</p>
           </div>
         </div>
       ) : null}

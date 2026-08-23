@@ -29,7 +29,7 @@ export const LaunchBar = memo(function LaunchBar({
           Loop <b>{loop.seconds.toFixed(2)} s</b>
         </span>
         <span>
-          <b>{settings.output.frames}</b> fotogrammi
+          <b>{settings.output.frames}</b> frames
         </span>
         <span>
           <b>{loop.actualFps.toFixed(loop.rounded ? 1 : 0)}</b> fps
@@ -38,25 +38,25 @@ export const LaunchBar = memo(function LaunchBar({
 
       {loop.rounded ? (
         <p className="hint">
-          La GIF misura i tempi in centesimi di secondo: {settings.output.fps} fps diventano{" "}
+          GIF timing is measured in hundredths of a second: {settings.output.fps} fps becomes{" "}
           {loop.actualFps.toFixed(1)}.
         </p>
       ) : null}
 
       {noTurns ? (
-        <p className="hint hint--warn">Nessun asse di rotazione attivo: il loop sarà immobile.</p>
+        <p className="hint hint--warn">No rotation axis is active: the loop will stand still.</p>
       ) : null}
 
       {heavy ? (
         <p className="hint hint--warn">
-          Servono circa {formatBytes(memory)} di memoria per i fotogrammi. Riduci risoluzione o
-          numero di fotogrammi se il browser si blocca.
+          The frames need roughly {formatBytes(memory)} of memory. Lower the resolution or the
+          frame count if the browser stalls.
         </p>
       ) : null}
 
       {videoUnsupported ? (
         <p className="hint hint--error">
-          Questo browser non sa codificare video. Esporta in GIF oppure apri lo studio in Chrome.
+          This browser cannot encode video. Export a GIF, or open the studio in Chrome.
         </p>
       ) : null}
 
@@ -66,7 +66,7 @@ export const LaunchBar = memo(function LaunchBar({
         onClick={onRender}
         disabled={busy || videoUnsupported}
       >
-        {busy ? "Render in corso…" : settings.output.format === "gif" ? "Genera la GIF" : "Genera il video"}
+        {busy ? "Rendering…" : settings.output.format === "gif" ? "Render the GIF" : "Render the video"}
       </button>
     </div>
   )
@@ -98,7 +98,7 @@ export function ProgressOverlay({
       </div>
       <span className="progress__pct">{pct}%</span>
       <button type="button" className="btn btn--danger" onClick={onCancel}>
-        Annulla
+        Cancel
       </button>
     </div>
   )
@@ -119,32 +119,32 @@ export function ResultOverlay({
     <div className="overlay">
       <div className="result">
         <div className="result__head">
-          <span>{result.format === "gif" ? "GIF pronta" : "Video pronto"}</span>
+          <span>{result.format === "gif" ? "GIF ready" : "Video ready"}</span>
           <span className="spacer" />
           <span style={{ color: "var(--ink-3)" }}>{result.filename}</span>
         </div>
         <div className="result__media">
           {result.format === "gif" ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={url} alt={`Anteprima di ${result.filename}`} />
+            <img src={url} alt={`Preview of ${result.filename}`} />
           ) : (
             <video src={url} autoPlay loop muted playsInline />
           )}
         </div>
         <div className="result__foot">
           <span className="hint">
-            {formatBytes(result.blob.size)} · {result.frames} fotogrammi ·{" "}
-            {(result.durationMs / 1000).toFixed(1)} s di lavoro
+            {formatBytes(result.blob.size)} · {result.frames} frames ·{" "}
+            {(result.durationMs / 1000).toFixed(1)} s of work
           </span>
           <span className="spacer" />
           <button type="button" className="btn" onClick={onClose}>
-            Chiudi
+            Close
           </button>
           <a className="btn" href={url} target="_blank" rel="noreferrer">
-            Apri
+            Open
           </a>
           <button type="button" className="btn btn--primary" onClick={onDownload}>
-            Scarica
+            Download
           </button>
         </div>
       </div>

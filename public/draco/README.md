@@ -1,14 +1,14 @@
 # Draco decoder
 
-Decoder Draco per glTF, copiato da `three/examples/jsm/libs/draco/gltf/` (three.js r182).
+The glTF Draco decoder, copied from `three/examples/jsm/libs/draco/gltf/` (three.js r182).
 
-Sta qui, e non su un CDN, perché ASCII Studio deve poter aprire un modello compresso con Draco
-anche senza rete: `components/studio/model.tsx` punta `DRACOLoader` a `/draco/`.
+It lives here rather than on a CDN because ASCII Studio has to open a Draco-compressed model
+with no network: `components/studio/model.tsx` points `DRACOLoader` at `/draco/`.
 
-Se aggiorni three.js, riallinea questi file:
+When you upgrade three.js, refresh these files:
 
 ```bash
 cp node_modules/three/examples/jsm/libs/draco/gltf/{draco_decoder.js,draco_decoder.wasm,draco_wasm_wrapper.js} public/draco/
 ```
 
-Google Draco — licenza Apache 2.0. <https://github.com/google/draco>
+Google Draco — Apache 2.0 licence. <https://github.com/google/draco>

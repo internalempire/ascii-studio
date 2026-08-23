@@ -22,7 +22,7 @@ export class ModelErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error) {
-    this.props.onError(error?.message || "Impossibile caricare il modello")
+    this.props.onError(error?.message || "Could not load the model")
   }
 
   componentDidUpdate(prev: Props) {

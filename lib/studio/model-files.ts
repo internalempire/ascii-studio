@@ -28,7 +28,7 @@ export function releaseModelFiles() {
 export function registerModelFiles(files: File[]): LoadedModelFiles {
   const entry = files.find((f) => /\.(glb|gltf)$/i.test(f.name))
   if (!entry) {
-    throw new Error("Nessun file .glb o .gltf nella selezione")
+    throw new Error("No .glb or .gltf file in the selection")
   }
 
   releaseModelFiles()

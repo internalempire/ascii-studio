@@ -56,7 +56,8 @@ in poi *Scala* e gli *Offset* sono tuoi.
 
 Se il modello contiene clip di animazione compare la sezione **Animazione**: puoi scegliere la clip
 e quante volte deve ripetersi dentro il loop. In export la clip viene campionata a tempo assoluto,
-quindi si richiude esatta come la rotazione.
+quindi si richiude esatta come la rotazione, e la stessa configurazione produce sempre gli stessi
+fotogrammi.
 
 ---
 
@@ -83,6 +84,28 @@ Gli altri controlli utili quando il risultato non convince: *Contrasto* (allarga
 della conversione), *Soglia inchiostro* (quanto poco basta perché una cella venga disegnata),
 *Taglio sfondo* (sotto quale luminanza una cella è considerata fondo vuoto) e *Guadagno volume*
 (quanto marcato è il passaggio fra glifi radi e densi, cioè quanto il disegno sembra tridimensionale).
+
+---
+
+## Da dove parte il loop
+
+Il loop comincia **dall'angolo che l'anteprima sta mostrando**, non da una posa fissa. Questo
+conta più di quanto sembri: se inquadri il modello facendolo girare e poi metti in pausa la
+rotazione, l'angolo raggiunto viene scritto nei campi *Angolo iniziale* della sezione Posa, e la
+GIF partirà esattamente da lì. Sono valori normali: si digitano, si salvano nel JSON e si
+ricaricano, quindi una stessa inquadratura è riproducibile.
+
+Se il modello arriva storto dal suo file, la sezione Posa ha due rimedi distinti, e vale la pena
+sapere quale serve:
+
+- **Asse verticale** corregge un modello *ruotato* — tipicamente esportato da uno strumento Z-up,
+  o capovolto.
+- **Specchia** corregge un modello *riflesso*, cioè con una scala negativa nella radice. Serve un
+  controllo a parte perché un riflesso non si annulla con nessuna rotazione. Quando lo studio
+  rileva un file di questo tipo te lo dice sotto il pannello del modello.
+
+Le due correzioni agiscono fra il centraggio e la rotazione del loop, quindi il modello resta
+inquadrato e il giro avviene attorno all'asse verticale corretto.
 
 ---
 

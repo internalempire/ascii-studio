@@ -138,7 +138,7 @@ export function Studio() {
       setModelStats(null)
       setSource({ kind: "url", url: loaded.url, name: loaded.name })
     } catch (err) {
-      setModelError(err instanceof Error ? err.message : "File non valido")
+      setModelError(err instanceof Error ? err.message : "Invalid file")
     }
   }, [])
 
@@ -164,11 +164,11 @@ export function Studio() {
   const handleModelError = useCallback((message: string) => {
     // Loader errors quote a blob URL and a parser message: useless to a person holding a file.
     const detail = /not valid JSON|Unexpected token|Unexpected end/i.test(message)
-      ? "il file non sembra un GLB o un GLTF valido"
+      ? "the file does not look like a valid GLB or GLTF"
       : /404|Failed to fetch|Could not load/i.test(message)
-        ? "manca un file collegato (.bin o una texture): selezionali tutti insieme"
-        : message.replace(/blob:[^\s:]+:?/g, "").trim() || "formato non riconosciuto"
-    setModelError(`Caricamento fallito: ${detail}.`)
+        ? "a companion file is missing (.bin or a texture) — select them all together"
+        : message.replace(/blob:[^\s:]+:?/g, "").trim() || "unrecognised format"
+    setModelError(`Could not load: ${detail}.`)
   }, [])
 
   /* --------------------------------------------------------------- export */
@@ -181,7 +181,7 @@ export function Studio() {
       return null
     })
     setBusy(true)
-    setProgress({ phase: "warmup", current: 0, total: settingsRef.current.output.frames, message: "Preparazione" })
+    setProgress({ phase: "warmup", current: 0, total: settingsRef.current.output.frames, message: "Preparing" })
     try {
       const produced = await runExport({
         controller,
@@ -222,7 +222,7 @@ export function Studio() {
   const copyJsx = useCallback(async () => {
     const jsx = toJsxSnippet(settingsRef.current)
     if (await copyText(jsx)) {
-      flash("JSX copiato negli appunti")
+      flash("JSX copied to the clipboard")
       return
     }
     // Clipboard refused: put the text on screen so it is still reachable.
@@ -237,15 +237,15 @@ export function Studio() {
   const loadJson = useCallback(async (file: File) => {
     try {
       setSettings(reviveSettings(JSON.parse(await file.text())))
-      flash("Parametri caricati")
+      flash("Settings loaded")
     } catch {
-      flash("File di parametri non valido")
+      flash("Not a valid settings file")
     }
   }, [flash])
 
   const resetAll = useCallback(() => {
     setSettings(structuredClone(DEFAULT_SETTINGS))
-    flash("Parametri riportati ai valori iniziali")
+    flash("Settings reset to their starting values")
   }, [flash])
 
   /* ----------------------------------------------------------------- view */
@@ -276,15 +276,15 @@ export function Studio() {
     <div className="overlay">
       <div className="result" style={{ width: "min(760px, 100%)" }}>
         <div className="result__head">
-          <span>Configurazione JSX</span>
+          <span>JSX configuration</span>
           <span className="spacer" />
-          <span style={{ color: "var(--ink-3)" }}>appunti non disponibili — selezionala e copiala</span>
+          <span style={{ color: "var(--ink-3)" }}>clipboard unavailable — select it and copy by hand</span>
         </div>
         <textarea
           className="text"
           readOnly
           value={snippet}
-          aria-label="Configurazione JSX generata"
+          aria-label="Generated JSX configuration"
           style={{ minHeight: "42vh", border: 0, resize: "none", lineHeight: 1.55, fontSize: 11 }}
           onFocus={(e) => e.currentTarget.select()}
           autoFocus
@@ -292,7 +292,7 @@ export function Studio() {
         <div className="result__foot">
           <span className="spacer" />
           <button type="button" className="btn btn--primary" onClick={() => setSnippet(null)}>
-            Chiudi
+            Close
           </button>
         </div>
       </div>
@@ -300,11 +300,11 @@ export function Studio() {
   ) : exportError ? (
     <div className="overlay">
       <div className="empty">
-        <p className="overlay__title">Export interrotto</p>
+        <p className="overlay__title">Export stopped</p>
         <p className="empty__body">{exportError}</p>
         <div style={{ marginTop: 16 }}>
           <button type="button" className="btn" onClick={() => setExportError(null)}>
-            Chiudi
+            Close
           </button>
         </div>
       </div>
@@ -322,7 +322,7 @@ export function Studio() {
           <span className="head__filename" title={source.name}>
             {source.name}
           </span>
-          {modelStats ? <span>{modelStats.triangles.toLocaleString("it-IT")} tri</span> : null}
+          {modelStats ? <span>{modelStats.triangles.toLocaleString("en-US")} tri</span> : null}
         </div>
         <div className="head__spacer">
           {flashMessage ? (
@@ -336,7 +336,7 @@ export function Studio() {
             className="select"
             style={{ width: 150 }}
             value=""
-            aria-label="Applica un preset di resa"
+            aria-label="Apply a look preset"
             onChange={(e) => {
               applyPreset(e.target.value)
               e.target.value = ""
@@ -349,26 +349,26 @@ export function Studio() {
               </option>
             ))}
           </select>
-          <button type="button" className="btn" onClick={copyJsx} title="Copia la configurazione come JSX per il componente originale">
-            Copia JSX
+          <button type="button" className="btn" onClick={copyJsx} title="Copy the current look as JSX for the original component">
+            Copy JSX
           </button>
           <button type="button" className="btn" onClick={saveJson}>
-            Salva
+            Save
           </button>
           <button type="button" className="btn" onClick={() => jsonInputRef.current?.click()}>
-            Apri
+            Load
           </button>
           <button type="button" className="btn" onClick={resetAll}>
             Reset
           </button>
-          <a className="btn" href="/hero" title="La pagina hero originale del progetto">
+          <a className="btn" href="/hero" title="The original hero page of this project">
             Hero
           </a>
         </div>
       </header>
 
       <div className="main">
-        <aside className="rail rail--left" aria-label="Scena">
+        <aside className="rail rail--left" aria-label="Scene">
           <div className="rail__scroll">
             <SourcePanel
               source={source}
@@ -416,15 +416,16 @@ export function Studio() {
               effectRef={effectRef}
               onModelStats={handleModelStats}
               onModelError={handleModelError}
+              onCommitPhase={patchTransform}
             />
           </Viewport>
 
           <div className="status">
             <span className="status__cell">
-              Griglia <b>{cols}×{rows}</b>
+              Grid <b>{cols}×{rows}</b>
             </span>
             <span className="status__cell">
-              Cella <b>{settings.ascii.cellSize}px</b>
+              Cell <b>{settings.ascii.cellSize}px</b>
             </span>
             <span className="status__cell">
               Set <b>{CHARSETS[settings.ascii.charset].label}</b>
@@ -439,12 +440,12 @@ export function Studio() {
               style={{ background: "transparent", border: 0, borderLeft: "1px solid var(--rule)", color: "inherit", font: "inherit", cursor: "pointer" }}
               onClick={() => setZoomMode((z) => (z === "fit" ? "one" : "fit"))}
             >
-              Zoom <b>{Math.round(zoomScale * 100)}%</b> · {zoomMode === "fit" ? "adatta" : "1:1"}
+              Zoom <b>{Math.round(zoomScale * 100)}%</b> · {zoomMode === "fit" ? "fit" : "1:1"}
             </button>
           </div>
         </section>
 
-        <aside className="rail rail--right" aria-label="Resa ed export">
+        <aside className="rail rail--right" aria-label="Look and export">
           <div className="rail__scroll">
             <OutputPanel
               value={settings.output}

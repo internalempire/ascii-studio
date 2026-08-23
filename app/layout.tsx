@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ASCII Studio",
   description:
-    "Studio locale per trasformare un modello 3D in arte ASCII animata: caricamento dei modelli, controllo di ogni parametro dello shader ed export della rotazione a 360° in GIF o video.",
+    "A local studio that turns a 3D model into animated ASCII art: load models, tune every shader parameter, and export a 360° rotation as a GIF or a video.",
 };
 
 export default function RootLayout({

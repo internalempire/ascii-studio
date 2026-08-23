@@ -12,7 +12,7 @@ const Studio = dynamic(() => import("./studio").then((m) => m.Studio), {
     <div className="app">
       <div style={{ display: "grid", placeItems: "center", height: "100dvh" }}>
         <p className="overlay__title" style={{ fontFamily: "var(--mono)" }}>
-          Avvio dello studio…
+          Starting the studio…
         </p>
       </div>
     </div>

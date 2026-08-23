@@ -54,7 +54,7 @@ export async function runExport(options: {
   composite.width = width
   composite.height = height
   const ctx = composite.getContext("2d", { willReadFrequently: format === "gif", alpha: true })
-  if (!ctx) throw new Error("Canvas 2D non disponibile")
+  if (!ctx) throw new Error("2D canvas unavailable")
 
   let sink: FrameSink | null = format === "webm" ? await createVideoSink(composite, fps) : null
 
@@ -72,11 +72,11 @@ export async function runExport(options: {
   const rgbaFrames: Uint8ClampedArray[] = []
 
   try {
-    onProgress({ phase: "warmup", current: 0, total: frames, message: "Preparazione della scena" })
+    onProgress({ phase: "warmup", current: 0, total: frames, message: "Preparing the scene" })
     // Let the material swap, the env map and the first composited pass settle.
     await controller.settle(4)
 
-    onProgress({ phase: "render", current: 0, total: frames, message: "Render dei fotogrammi" })
+    onProgress({ phase: "render", current: 0, total: frames, message: "Rendering frames" })
     sink?.start()
 
     const frameInterval = 1000 / fps
@@ -111,13 +111,13 @@ export async function runExport(options: {
         rgbaFrames.push(ctx.getImageData(0, 0, width, height).data)
       }
 
-      onProgress({ phase: "render", current: i + 1, total: frames, message: "Render dei fotogrammi" })
+      onProgress({ phase: "render", current: i + 1, total: frames, message: "Rendering frames" })
     }
 
     const slug = safeSlug(modelName)
 
     if (sink) {
-      onProgress({ phase: "encode", current: frames, total: frames, message: "Chiusura del file video" })
+      onProgress({ phase: "encode", current: frames, total: frames, message: "Closing the video file" })
       // The realtime encoder needs the last frame to live out its full duration.
       if (sink.realtime) await sleep(frameInterval)
       const extension = sink.extension
@@ -132,7 +132,7 @@ export async function runExport(options: {
       }
     }
 
-    onProgress({ phase: "encode", current: 0, total: frames, message: "Codifica GIF" })
+    onProgress({ phase: "encode", current: 0, total: frames, message: "Encoding GIF" })
     const blob = await encodeGif(rgbaFrames, {
       width,
       height,
@@ -141,7 +141,7 @@ export async function runExport(options: {
       transparent,
       shouldAbort: () => controller.isAborted,
       onProgress: (done, total) =>
-        onProgress({ phase: "encode", current: done, total, message: "Codifica GIF" }),
+        onProgress({ phase: "encode", current: done, total, message: "Encoding GIF" }),
     })
 
     return {
@@ -155,8 +155,8 @@ export async function runExport(options: {
     if (err instanceof Error && err.message === "FRAME_TIMEOUT") {
       throw new Error(
         wentHidden
-          ? "Il render si è fermato perché la scheda è passata in secondo piano. Il browser sospende l'animazione: tieni questa scheda in primo piano per tutta la durata dell'export."
-          : "Il render non ha prodotto un fotogramma entro 20 secondi. Prova con una risoluzione più bassa o un modello più leggero."
+          ? "Rendering stalled because the tab went to the background. Browsers suspend animation there, so keep this tab in front for the whole export."
+          : "No frame was produced within 20 seconds. Try a lower resolution or a lighter model."
       )
     }
     throw err

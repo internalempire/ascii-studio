@@ -1,140 +1,114 @@
-> **Questo clone include ASCII Studio**, un'interfaccia locale per caricare modelli 3D, regolare
-> ogni parametro dello shader ed esportare la rotazione a 360° come GIF animata o video.
-> Avvia `npm run dev` e apri <http://localhost:3000>. Documentazione: **[STUDIO.md](STUDIO.md)**.
-> La pagina hero originale descritta qui sotto resta disponibile su `/hero`.
+# ASCII Studio
+
+A local studio for turning a 3D model into animated ASCII art. Load a model, tune every
+parameter of the shader while watching the result, and export a full 360° rotation as an
+animated GIF or a video.
+
+Everything runs in the browser on your own machine. There is no account, no service and no
+upload: models are read straight from disk, and the Draco decoder is vendored, so the studio
+works with the network switched off.
+
+Built on top of [egorshest/webgl-ascii-hero](https://github.com/egorshest/webgl-ascii-hero).
+The original hero demo is preserved at `/hero`.
 
 ---
 
-# Next.js hero section with animated rotating object in ASCII style
+## Requirements
 
-A beautiful Next.js project boilerplate with a hero page WebGL demo featuring a 3D GLTF model rendered with React Three Fiber and post-processed into an animated ASCII art effect using custom shaders.
+- **Node.js 20.9 or newer** (Next.js 16 requires it) — `node --version`
+- npm, which ships with Node
+- A browser with WebGL2. Chrome is recommended: video export uses WebCodecs there, and falls
+  back to `MediaRecorder` elsewhere.
 
-## Features
+## Rebuilding from this repository
 
-- **Real-time ASCII conversion** - Custom GLSL shader converts 3D scene to ASCII art
-- **Interactive 3D model** - Drag to rotate, hover to zoom
-- **Post-processing effects** - CRT-style scanlines, vignette, and glow effects
-- **Mouse-reactive** - Mouse position affects glow and visual effects
-- **Responsive** - Works on desktop and mobile devices
-
-## Tech Stack
-
-- [Next.js](https://nextjs.org/) - React framework
-- [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) - React renderer for Three.js
-- [Three.js](https://threejs.org/) - 3D graphics library
-- [Postprocessing](https://github.com/pmndrs/postprocessing) - Post-processing effects
-- [@react-three/drei](https://github.com/pmndrs/drei) - Useful helpers for R3F
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ 
-- npm, yarn, pnpm, or bun
-
-### Installation
+Dependencies are **not** committed — `node_modules` is roughly 600 MB and is fully described by
+`package.json` and `package-lock.json`. The lockfile pins the exact version of every package, so
+`npm ci` reconstructs the identical tree on any machine.
 
 ```bash
-# Clone the repository
-git clone https://github.com/egorshest/webgl-ascii-hero.git
-cd webgl-ascii-hero
+git clone https://github.com/internalempire/webgl-ascii-hero-gui.git
+```
 
-# Install dependencies
-npm install
+```bash
+cd webgl-ascii-hero-gui && npm ci
+```
 
-# Run the development server
+Then either run the dev server:
+
+```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to see the effect.
-
-## Project Structure
-
-```
-webgl-ascii-hero/
-├── app/
-│   ├── layout.tsx      # Root layout
-│   ├── page.tsx        # Home page
-│   └── globals.css     # Global styles
-├── components/
-│   ├── hero.tsx        # Hero component (main page)
-│   ├── effect-scene.tsx # 3D scene setup
-│   └── ascii-effect.tsx # ASCII post-processing shader
-└── public/
-    └── models/
-        └── user-model.glb   # 3D model (GLTF format) - DEMO ONLY, replace with your own
-```
-
-## Customization
-
-### Adding Your Own 3D Model
-
-⚠️ **Important:** The included `user-model.glb` model is for **demonstration purposes only**. Please remove it and use your own model.
-
-**Steps to add your own model:**
-
-1. **Download a GLB model** from any source (make sure you have the rights to use it):
-   - [Sketchfab](https://sketchfab.com/3d-models?features=downloadable&sort_by=-likeCount&q=cc0) - Filter by CC0 license for free models
-   - [Poly Haven](https://polyhaven.com/models) - CC0 models
-   - [glTF Sample Models](https://github.com/KhronosGroup/glTF-Sample-Models) - Various licenses
-   - Or create your own using Blender, Maya, etc.
-
-2. **Replace the demo model** with your own GLB file:
-   ```bash
-   # Simply replace the demo file with your own model
-   # Make sure your file is named "user-model.glb" and placed in public/models/
-   # The code already references "/models/user-model.glb", so no code changes needed!
-   ```
-
-3. **Adjust the scale** if needed in `components/effect-scene.tsx` (line 124):
-   ```tsx
-   <UserModel scale={8} />  // Change the number to adjust size
-   ```
-
-4. **Update the component name** from `UserModel` to match your model (optional, for clarity).
-
-### Adjust ASCII Effect
-
-Modify the `AsciiEffect` props in `components/effect-scene.tsx`:
-
-```tsx
-<AsciiEffect
-  cellSize={9}              // Size of ASCII cells
-  invert={true}             // Invert brightness
-  color={true}              // Enable color
-  characterSet="terminal"   // Character set
-  volumeShading={true}      // 3D depth effect
-  tintColor="#917AFF"       // Tint color
-  postfx={{
-    contrastAdjust: 1.8,    // Contrast
-    brightnessAdjust: 0,   // Brightness
-  }}
-/>
-```
-
-### Modify Scene Lighting
-
-Edit lighting in `components/effect-scene.tsx`:
-
-```tsx
-<ambientLight intensity={0.08} />
-<directionalLight position={[2, 3.5, 6]} intensity={6} />
-<directionalLight position={[-2, 1.5, 4]} intensity={0.35} />
-```
-
-## Building for Production
+…or build and serve the production bundle:
 
 ```bash
-npm run build
-npm start
+npm run build && npm start
 ```
 
-## License
+Both listen on <http://localhost:3000>. The studio is the home page; `/hero` is the original
+demo. Use `PORT=3100 npm start` to serve somewhere else.
 
-MIT License - feel free to use this project for your own purposes.
+`npm ci` takes a few seconds and needs no configuration: there are no environment variables, no
+API keys and no external services. If you prefer `npm install` it works too, but `npm ci` is the
+one that guarantees the lockfile is honoured exactly.
 
-## Credits
+### What is committed, and why
 
-- ASCII shader inspiration: Classic terminal art and CRT displays
-- Built with [React Three Fiber](https://docs.pmnd.rs/react-three-fiber), [Three.js](https://threejs.org/), and [Next.js](https://nextjs.org/)
+| Committed | Not committed |
+| --- | --- |
+| Source, `package.json`, `package-lock.json` | `node_modules/` — rebuilt by `npm ci` |
+| `public/draco/` (≈750 KB) | `.next/` — rebuilt by `npm run build` |
+| `public/models/user-model.glb` (demo model) | `.claude/` — local tooling config |
+
+`public/draco/` is the one exception to "no dependencies in the repository". It is not an npm
+package but a **runtime asset served to the browser**: the decoder that opens Draco-compressed
+models. Without it in the repo the app would have to fetch it from a Google CDN on every load,
+and would fail with no network. See `public/draco/README.md`.
+
+---
+
+## Using the studio
+
+Full documentation is in **[STUDIO.md](STUDIO.md)**. The short version:
+
+- **Load a model** — drop a `.glb` on the viewport, or pick a `.gltf` together with its `.bin`
+  and textures. Draco and Meshopt compression are supported. Six built-in primitives let you try
+  a look with no file at hand.
+- **Tune it** — around fifty live controls across nine sections. Seven presets, JSON save/load,
+  and a *Copy JSX* action that emits the current look as props for the original hero component.
+- **Export a loop** — whole turns per axis on X, Y and Z, so the loop always closes. The preview
+  renders at the export resolution, and the loop starts from the angle the preview is showing:
+  pause the spin to lock the shot. GIF output can carry 1-bit transparency; video goes through
+  WebCodecs for exact frame timing.
+
+Keep the tab in the foreground while exporting — browsers suspend animation in background tabs,
+which stalls the capture.
+
+## Layout
+
+```
+app/page.tsx                  the studio
+app/hero/page.tsx             the original hero demo
+components/studio/
+  studio.tsx                  state, header, layout
+  scene.tsx                   R3F canvas, lights, camera, frame readback
+  model.tsx                   loading, fitting, orientation, materials, animation
+  ascii-effect-studio.tsx     shader and glyph atlas, hot-updated uniforms
+  panels.tsx · ui.tsx         panels and controls
+  viewport.tsx                framing, orbit, drop target
+  export-panel.tsx            launch bar, progress, result
+lib/studio/
+  settings.ts                 parameters, presets, character sets
+  capture.ts                  frame-exact handoff between render loop and exporter
+  export-run.ts               the capture sequence
+  gif.ts · video.ts           GIF and video encoding
+  code-snippet.ts             JSX emitter
+```
+
+## Licence
+
+MIT, inherited from the original project — see [LICENSE](LICENSE).
+
+The demo model in `public/models/` comes from the upstream repository, where it is marked as
+being for demonstration only. Replace it with your own before using this anywhere public.

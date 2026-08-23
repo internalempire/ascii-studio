@@ -146,6 +146,7 @@ export interface StudioSceneProps {
   effectRef: React.MutableRefObject<StudioAsciiEffectImpl | null>
   onModelStats: (stats: ModelStats) => void
   onModelError: (message: string) => void
+  onCommitPhase: (phase: { phaseX: number; phaseY: number; phaseZ: number }) => void
 }
 
 export const StudioScene = memo(function StudioScene({
@@ -160,6 +161,7 @@ export const StudioScene = memo(function StudioScene({
   effectRef,
   onModelStats,
   onModelError,
+  onCommitPhase,
 }: StudioSceneProps) {
   const sourceKey = source.kind === "url" ? source.url : source.shape
 
@@ -195,6 +197,7 @@ export const StudioScene = memo(function StudioScene({
             settingsRef={settingsRef}
             controller={controller}
             onStats={onModelStats}
+            onCommitPhase={onCommitPhase}
           />
         </Suspense>
       </ModelErrorBoundary>
