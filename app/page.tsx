@@ -1,7 +1,5 @@
-import { Hero } from "../components/hero";
+import { StudioClient } from "@/components/studio/studio-client"
 
 export default function Home() {
-  return (
-    <Hero />
-  );
+  return <StudioClient />
 }

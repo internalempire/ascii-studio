@@ -1,0 +1,102 @@
+import { CHARSETS, resolveChars, type StudioSettings } from "./settings"
+
+const num = (v: number, d = 3) => {
+  const rounded = Number(v.toFixed(d))
+  return String(rounded)
+}
+
+/** Only ship the post-fx that are actually doing something — a wall of zeroes helps nobody. */
+function postfxEntries(s: StudioSettings): string[] {
+  const fx = s.fx
+  const out: string[] = [
+    `contrastAdjust: ${num(s.ascii.contrast)}`,
+    `brightnessAdjust: ${num(s.ascii.brightness)}`,
+  ]
+  const push = (cond: boolean, line: string) => cond && out.push(line)
+  push(fx.palette !== 0, `colorPalette: ${fx.palette}`)
+  push(fx.scanlineIntensity > 0, `scanlineIntensity: ${num(fx.scanlineIntensity)}`)
+  push(fx.scanlineIntensity > 0, `scanlineCount: ${num(fx.scanlineCount, 0)}`)
+  push(fx.vignetteIntensity > 0, `vignetteIntensity: ${num(fx.vignetteIntensity)}`)
+  push(fx.vignetteIntensity > 0, `vignetteRadius: ${num(fx.vignetteRadius)}`)
+  push(fx.glowIntensity > 0, `mouseGlowEnabled: true`)
+  push(fx.glowIntensity > 0, `mouseGlowIntensity: ${num(fx.glowIntensity)}`)
+  push(fx.glowIntensity > 0, `mouseGlowRadius: ${num(fx.glowRadius, 0)}`)
+  push(fx.curvature > 0, `curvature: ${num(fx.curvature, 4)}`)
+  push(fx.aberration > 0, `aberrationStrength: ${num(fx.aberration, 5)}`)
+  push(fx.noiseIntensity > 0, `noiseIntensity: ${num(fx.noiseIntensity, 4)}`)
+  push(fx.noiseIntensity > 0, `noiseScale: ${num(fx.noiseScale, 0)}`)
+  push(fx.noiseIntensity > 0, `noiseSpeed: ${num(fx.noiseSpeed)}`)
+  push(fx.waveAmplitude > 0, `waveAmplitude: ${num(fx.waveAmplitude, 5)}`)
+  push(fx.waveAmplitude > 0, `waveFrequency: ${num(fx.waveFrequency)}`)
+  push(fx.waveAmplitude > 0, `waveSpeed: ${num(fx.waveSpeed)}`)
+  push(fx.glitchIntensity > 0, `glitchIntensity: ${num(fx.glitchIntensity)}`)
+  push(fx.glitchIntensity > 0, `glitchFrequency: ${num(fx.glitchFrequency)}`)
+  push(fx.jitterIntensity > 0, `jitterIntensity: ${num(fx.jitterIntensity)}`)
+  push(fx.jitterIntensity > 0, `jitterSpeed: ${num(fx.jitterSpeed)}`)
+  push(fx.targetFPS > 0, `targetFPS: ${num(fx.targetFPS, 0)}`)
+  return out
+}
+
+/**
+ * Emits the look as JSX for the original hero component, so a session in the studio
+ * ends in the user's own codebase instead of in a screenshot.
+ */
+export function toJsxSnippet(s: StudioSettings): string {
+  const chars = resolveChars(s.ascii.charset, s.ascii.customChars)
+  const characterSet =
+    s.ascii.charset === "terminal"
+      ? `"terminal"`
+      : chars
+        ? `{${JSON.stringify(chars)}}`
+        : `{null}`
+  const postfx = postfxEntries(s)
+    .map((line) => `    ${line},`)
+    .join("\n")
+
+  const charsetName = s.ascii.charset === "custom" ? "personalizzato" : CHARSETS[s.ascii.charset].label
+  // The shipped AsciiEffect only knows square cells; say so rather than emit a lie.
+  const aspectNote =
+    Math.abs(s.ascii.cellAspect - 1) > 0.001
+      ? `\n// NB: rapporto cella ${num(s.ascii.cellAspect)} — il componente originale usa celle quadrate,\n//     quindi qui la resa sarà leggermente diversa da quella dello studio.`
+      : ""
+
+  return `// Generato da ASCII Studio — set "${charsetName}"
+// Incolla in components/effect-scene.tsx${aspectNote}
+
+// Camera e posa
+const CAMERA_BASE_Z = ${num(s.transform.cameraDistance)}
+const CAMERA_FOV = ${num(s.transform.fov, 0)}
+const TILT_FORWARD = ${num((s.transform.tiltX * Math.PI) / 180)} // ${num(s.transform.tiltX, 1)}°
+const TILT_LEFT = ${num((s.transform.tiltZ * Math.PI) / 180)} // ${num(s.transform.tiltZ, 1)}°
+const AUTO_ROTATE_SPEED = ${num(s.transform.spinSpeed)}
+const MODEL_SCALE = ${num(s.transform.scale)}
+
+// Materiale del modello
+const MODEL_MATERIAL = new MeshStandardMaterial({
+  color: "${s.material.color}",
+  roughness: ${num(s.material.roughness)},
+  metalness: ${num(s.material.metalness)},
+  flatShading: ${s.material.flatShading},
+})
+
+// Luci
+gl.toneMappingExposure = ${num(s.light.exposure)}
+<ambientLight intensity={${num(s.light.ambient)}} />
+<directionalLight position={[2, 3.5, 6]} intensity={${num(s.light.keyIntensity)}} />
+<directionalLight position={[-4, 1.5, 3]} intensity={${num(s.light.fillIntensity)}} />
+
+// Effetto ASCII
+<AsciiEffect
+  style="standard"
+  cellSize={${num(s.ascii.cellSize)}}
+  invert={${s.ascii.invert}}
+  color={${s.ascii.colorMode}}
+  characterSet=${characterSet}
+  volumeShading={${s.ascii.volumeShading}}${s.ascii.useTint ? `\n  tintColor="${s.ascii.tintColor}"` : ""}
+  resolution={resolution}
+  mousePos={mousePos}
+  postfx={{
+${postfx}
+  }}
+/>`
+}

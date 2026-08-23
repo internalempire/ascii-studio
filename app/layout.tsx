@@ -13,8 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "WebGL ASCII Shader Effect",
-  description: "A beautiful WebGL demo featuring a 3D model rendered with React Three Fiber and post-processed into animated ASCII art using custom shaders.",
+  title: "ASCII Studio",
+  description:
+    "Studio locale per trasformare un modello 3D in arte ASCII animata: caricamento dei modelli, controllo di ogni parametro dello shader ed export della rotazione a 360° in GIF o video.",
 };
 
 export default function RootLayout({

@@ -1,3 +1,10 @@
+> **Questo clone include ASCII Studio**, un'interfaccia locale per caricare modelli 3D, regolare
+> ogni parametro dello shader ed esportare la rotazione a 360° come GIF animata o video.
+> Avvia `npm run dev` e apri <http://localhost:3000>. Documentazione: **[STUDIO.md](STUDIO.md)**.
+> La pagina hero originale descritta qui sotto resta disponibile su `/hero`.
+
+---
+
 # Next.js hero section with animated rotating object in ASCII style
 
 A beautiful Next.js project boilerplate with a hero page WebGL demo featuring a 3D GLTF model rendered with React Three Fiber and post-processed into an animated ASCII art effect using custom shaders.
